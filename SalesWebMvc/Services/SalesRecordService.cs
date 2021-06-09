@@ -1,10 +1,10 @@
-﻿using SalesWebMvc.Data;
-using SalesWebMvc.Models;
+﻿using SalesWebMvc.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using SalesWebMvc.Data;
 
 namespace SalesWebMvc.Services
 {
@@ -33,8 +33,14 @@ namespace SalesWebMvc.Services
                 .Include(x => x.Seller.Department)
                 .OrderByDescending(x => x.Date)
                 .ToListAsync();
-
         }
 
+        public async Task<List<IGrouping<Department, SalesRecord>>> FindByDateGroupingAsync(DateTime? minDate, DateTime? maxDate)
+        {
+            // transforms in object iqueryable
+            var result = await FindByDateAsync(minDate, maxDate);
+
+            return result.GroupBy(x => x.Seller.Department).ToList();
+        }
     }
 }
